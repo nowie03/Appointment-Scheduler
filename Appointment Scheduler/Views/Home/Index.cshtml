@@ -1,8 +1,56 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    bool emailExists = true;
+    bool passwordMatches = true;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid p-5">
+<form asp-action="Index" method="post">
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email address</label>
+        @if (emailExists == true) {
+            <input name="email" type="email" class="form-control " id="exampleInputEmail1" aria-describedby="emailHelp">
+        }
+        @if (emailExists == false) {
+            <input name="email"  type="email" class="form-control is-invalid" id="exampleInputEmail1" aria-describedby="emailHelp">
+
+            <div class="invalid-feedback">
+                email doesnt Exists
+            </div>
+        }
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+
+        @if (passwordMatches == true)
+        {
+            <input name="password" type="password" class="form-control " id="exampleInputPassword1">
+        }
+        @if (passwordMatches == false)
+        {
+            <input name="password" type="password" class="form-control is-invalid" id="exampleInputPassword1">
+
+            <div class="invalid-feedback">
+                Check Your Password
+            </div>
+        }
+        <div class="valid-feedback">
+            Looks good!
+        </div>
+    </div>
+    @if (emailExists == false || passwordMatches == false)
+    {
+        <button type="submit" disabled class="btn btn-primary">Login</button>
+    }
+    @if (emailExists == true && passwordMatches == true)
+    {
+        <button type="submit" class="btn btn-primary">Login</button>
+    }
+
+    </form>
+    <div class="d-flex mt-3">
+        <a class="page-link me-2" href="Home/ResetPassword">forgot password ?</a>
+        <a class="page-link" href="Home/Signup">Sign Up</a>
+    </div>
 </div>

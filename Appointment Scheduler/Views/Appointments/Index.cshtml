@@ -1,0 +1,99 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    List<Appointment> appointments = ViewBag.Appointments;
+    bool editMode = ViewBag.editMode==null?false:ViewBag.editMode;
+    int appointmentId = ViewBag.appointmentId == null ? -1 : ViewBag.appointmentId;
+}
+<div class=" mt-3" style="height:5rem;}">
+    <p class=" d-inline fw-bold" style="font-size:2rem;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">HERE ARE YOUR UPCOMING APPOINTMENTS</p>
+    <a href="/" class=" btn sfloat-end p-2" >Logout</a>
+</div>
+<div class="container p-5 ">
+   @* <table class="table table-striped">
+        <thead>
+            <tr class="p-4">
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(Appointment appointment in appointments)
+            {
+                <tr class="p-4">
+                    <td>@appointment.Title</td>
+                    <td>@appointment.Description</td>
+                    <td>@appointment.Date</td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
+    @if (editMode == false)
+    {
+        @foreach (Appointment appointment in appointments)
+        {
+            <div class="card card-hover mb-5 shadow-lg">
+                <div class="card-header">
+                    <h5 class="card-title">@appointment.Title</h5>
+                    <span class="float-end">@appointment.Date.ToLongDateString()</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@appointment.Description</p>
+                    <div class="d-flex float-end mt-3 mb-3">
+                        <a href="/Appointments/Edit?userId=1&appointmentId=@appointment.Id" class="btn me-2 btn-warning">Edit</a>
+                        <a href="/" class="btn btn-danger">Delete</a>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+    }
+    @if (editMode == true)
+    {
+        @foreach (Appointment appointment in appointments)
+        {
+            @if (appointment.Id == appointmentId)
+            {
+                <div class="card card-hover mb-5 shadow-lg">
+                    <form asp-action="Edit" asp-route-id=@appointment.Id asp-route-userId=1 method="post">
+                <div class="card-header">
+                            <label for="app-title" class="form-label">Title </label>
+                            <input value="@appointment.Title"type="text" name="title" class="form-control" id="app-title" required/>
+                            <label for="app-date" class="form-label">Date </label>
+                            <input calue="@appointment.Date" type="date" name="date" class="form-control" id="app-date" required />
+                </div>
+                <div class="card-body">
+                        <label for="exampleFormControlTextarea1" class="form-label">Description </label>
+                        <input type ="text" value="@appointment.Description" required name="description" class="form-control" id="exampleFormControlTextarea1" rows="3"/>
+                    <div class="d-flex float-end mt-3 mb-3">
+                        <button type="submit" class="btn me-2 btn-success">Submit</button>
+                        <a href="/Appointments?userId=1" class="btn btn-danger">Cancel</a>
+                    </div>
+
+                </div>
+                </form>
+            </div>
+            }
+            @if (appointmentId != appointment.Id)
+            {
+                <div class="card card-hover mb-5 shadow-lg">
+                    <div class="card-header">
+                        <h5 class="card-title">@appointment.Title</h5>
+                        <span class="float-end">@appointment.Date.ToLongDateString()</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@appointment.Description</p>
+                        <div class="d-flex float-end mt-3 mb-3 ">
+                            <a href="/Appointments/Edit?userId=1&appointmentId=@appointment.Id" class="btn me-2 btn-warning">Edit</a>
+                            <a href="#" class="btn btn-danger">Delete</a>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>

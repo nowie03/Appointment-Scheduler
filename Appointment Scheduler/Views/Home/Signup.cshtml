@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+    bool userNameExists = false;
+    bool emailExists = false;
+}
+<div class="container-fluid p-5">
+<form asp-action="Signup" method="post">
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">User Name</label>
+        @if (userNameExists == false)
+        {
+            <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp">
+        }
+        @if (userNameExists == true)
+        {
+            <input name="username" type="text" class="form-control is-invalid" id="username" aria-describedby="usernameHelp">
+
+            <div class="invalid-feedback">
+                UserName already Exists,get more creative!
+            </div>
+        }
+
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email address</label>
+        @if (emailExists == false)
+        {
+            <input name="email" type="email" class="form-control " id="exampleInputEmail1" aria-describedby="emailHelp">
+        }
+        @if (emailExists == true)
+        {
+            <input name="email" type="email" class="form-control is-invalid" id="exampleInputEmail1" aria-describedby="emailHelp">
+
+            <div class="invalid-feedback">
+                email already Exists,you can try recover account in Login
+            </div>
+        }
+        
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputConfirmPassword1" class="form-label">Confirm Password</label>
+        <input name="confirm-password" type="password" class="form-control" id="exampleInputConfirmPassword1">
+    </div>
+    @if (emailExists == true || userNameExists == true)
+    {
+        <button type="submit" disabled class="btn btn-primary">Sign Up</button>
+    }
+    @if (emailExists == false && userNameExists == false)
+    {
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <div id="submitHelp" class="form-text">We will send you a confirmation mail</div>
+    }
+
+    
+</form>
+<div class="d-flex mt-3">
+<a class="page-link" href="/">Login</a>
+    </div>
+</div>

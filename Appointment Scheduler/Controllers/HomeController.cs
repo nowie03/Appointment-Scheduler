@@ -18,10 +18,30 @@ namespace Appointment_Scheduler.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Index(IFormCollection collection)
+        {
+            
+            return RedirectToAction(actionName: "Index", controllerName: "Appointments", new { userId=1});
+        }
+
+        public IActionResult Signup()
         {
             return View();
         }
+
+        [HttpPost]
+        public IActionResult Signup(IFormCollection collection)
+        {
+            return RedirectToAction(actionName: "Index", controllerName: "Appointments", new { userId=1});
+
+        }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
