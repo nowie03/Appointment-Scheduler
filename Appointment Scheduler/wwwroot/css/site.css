@@ -17,6 +17,11 @@ body {
   margin-bottom: 60px;
 }
 
+html::-webkit-scrollbar {
+    display: none;
+}
+
+
 .card-hover {
     transition: all 0.2s ease;
     cursor: pointer;

@@ -9,7 +9,7 @@ namespace Appointment_Scheduler.Database
         private string? _connectionString;
         private IConfiguration? _configuration;
         private SqlConnection? _connection;
-        private static byte[] _salt = RandomNumberGenerator.GetBytes(128 / 8); 
+        private static byte[] _salt = new byte[] { 1,7,2,1,8,7,1,2,9,2,3,3,4,4,2,2,1,2,4,7,1,4,2,2,9,1,1,4,2,2,9,2,0,4,6,1,8,2,2,3,0,2,3,7}; 
         public DatabaseUtils(IConfiguration configuration)
         {
             try
@@ -31,8 +31,10 @@ namespace Appointment_Scheduler.Database
             _connection.Close();
         }
 
-        private string _getHashedPassowrd(string password) {
+        public   string _getHashedPassowrd(string password) {
             Console.WriteLine("salt: "+_salt);
+            foreach (var i in _salt) Console.Write(i);
+            Console.WriteLine();
             // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
@@ -69,7 +71,7 @@ namespace Appointment_Scheduler.Database
             int appointments = 0;
             try
             {
-                string query = "select count(*) from Appointments";
+                string query = "select top(1) id from Appointments order by createdon asc;";
                 SqlCommand command = new(query, _connection);
 
                 using (SqlDataReader reader = command.ExecuteReader())
@@ -80,26 +82,30 @@ namespace Appointment_Scheduler.Database
             }
             catch (Exception ec)
             {
-                Console.WriteLine("ERROR WHEN CREATING APPOINTMENT ID :" + ec.Message);
+                Console.WriteLine("ERROR WHEN FETCHING NO OF APPOINTMENT ID :" + ec.Message);
             }
             return appointments;
         }
 
-        public bool CreateUser(string username, string email,string password)
+        public int CreateUser(string username, string email,string password)
         {
+            int id = _getNoOfUsers() + 1;
             try {
                 string hashedPassword = _getHashedPassowrd(password);
-                int id = _getNoOfUsers() + 1;
                 string createQurey = $"insert into Users values({id},'{username}','{email}','{hashedPassword}')";
 
                 SqlCommand command = new(createQurey, _connection);
                 command.ExecuteNonQuery();
-                return true;
             }
             catch (Exception ex) {
                 Console.WriteLine("ERROR WHEN CREATING USER :" + ex.Message);
+                if (ex.Message.Contains("CK_email"))
+                    return -1;
+                if (ex.Message.Contains("UQ__Users__72E12F1B793B4E92"))
+                    return -2;
+              
             }
-            return false;
+            return id;
         }
 
         public List<Models.Appointment> GetAppointmentsOfUser(int id)
@@ -123,6 +129,8 @@ namespace Appointment_Scheduler.Database
                 }
             }
             catch (Exception ex) { Console.WriteLine("ERROR WHEN FETCHING APPOINTMENTS :"+ex.Message); }
+
+            appointments.Sort((x,y)=> DateTime.Compare(x.Date,y.Date));
 
             return appointments;
 
@@ -176,10 +184,12 @@ namespace Appointment_Scheduler.Database
             return user;
         }
 
-        public bool CreateAppointment(string title, string description, DateTime date, int userId)
+        public bool CreateAppointment(string title, string description, string date, int userId)
         {
             int id = _getNoOfAppointments() + 1;
-            string query = $"insert into Appointments values({id},'{title}','{description}','{date}',{userId})";
+            string todayDate =DateTime.Now.ToString("yyyy/MM/dd");
+            Console.WriteLine(todayDate);
+            string query = $"insert into Appointments values({id},'{title}','{description}','{date}',{userId},'{todayDate}')";
             try
             {
                 SqlCommand sqlCommand = new(query, _connection);
@@ -201,6 +211,15 @@ namespace Appointment_Scheduler.Database
                 SqlCommand command = new(query, _connection);
                 command.ExecuteNonQuery();
             }catch(Exception ex) { Console.WriteLine("ERROR WHEN UPDATING APPOINTMENT "+ex.Message); }
+        }
+
+        public void DeleteAppointment(int userId,int appointmentId) {
+            string query = $"DELETE FROM Appointments where id={appointmentId}";
+            try {
+                SqlCommand command = new(query, _connection);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex) { Console.WriteLine("ERROR WHEN DELETING APPOINTMENT "+ex.Message); }
         }
     }
 }

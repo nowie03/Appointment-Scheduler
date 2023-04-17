@@ -1,0 +1,38 @@
+﻿@* 
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    int userId =(int) TempData["UserId"];
+}
+
+<div class="d-flex mb-5 mt-3" >
+  <a class="btn btn-dark " href="/Appointments?userId=1">back</a>
+ <h3 class="ms-4 d-inline">Create a New Appointment!</h3>
+ </div>
+<div class="container-fluid p-5">
+    <form method="post"  asp-action="Create" style="width:40rem;margin-left:15rem;">
+        <div class="form-group row mb-5">
+            <label for="app-title" class="col-sm-2 col-form-label">Title</label>
+            <div class="col-sm-10 mb-3" >
+                <input type="text" name="title"  class="form-control" id="app-title" required placeholder="Title of appointment" >
+            </div>
+        </div>
+        <div class="form-group row mb-5">
+            <label for="app-date" class="col-sm-2 col-form-label">Date</label>
+            <div class="col-sm-10 mb-3">
+                <input type="date" name="date" class="form-control" id="app-date" required placeholder="Description of Apppointment">
+            </div>
+         </div>
+        <div class="form-group row mb-5">
+            <label for="app-description" class="col-sm-2 col-form-label">Description</label>
+            <div class="col-sm-10 mb-3">
+                <input type="text" name="description" class="form-control" id="app-descrption" required placeholder="Description of Apppointment">
+            </div>
+        </div>
+        <div class="form-group row">
+                <button type="submit" class="btn btn-success">submit</button>
+         </div>
+    </form>
+</div>
+
+<script src="~/js/datepicker.js" asp-append-version="true"></script>
